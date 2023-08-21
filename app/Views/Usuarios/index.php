@@ -9,22 +9,24 @@
 
 <?php echo $this->section('conteudo') ?>
 <!-- Aqui coloco o conteudo a view -->
-<div class="col-lg-12">
-  <div class="block">
-    <div class="table-responsive">
-      <table id="ajaxTable" class="table table-striped table-sm" style="witdh: 100%;">
-        <thead>
-          <tr>
-            <th>imagem</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Situação</th>
-          </tr>
-        </thead>
-      </table>
+<div class="row">
+
+  <div class="col-lg-12">
+    <div class="block">
+      <div class="table-responsive">
+        <table id="ajaxTable" class="table table-striped table-sm" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>imagem</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Situação</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
     </div>
   </div>
-
 </div>
 
 

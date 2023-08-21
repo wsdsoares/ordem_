@@ -39,12 +39,13 @@ class Usuarios extends BaseController
         $data = [];
 
         foreach ($usuarios as $usuario) {
+
             $data[] = [
                 // 'imagem' => ($usuario->imagem != null ? $usuario->imagem : '<span class="text-warning">Sem imagem</span>'),
                 'imagem' => $usuario->imagem,
-                'nome' => esc($usuario->nome),
+                'nome' => anchor("usuarios/exibir/$usuario->id", esc($usuario->nome), 'title="Exibir usuário ' . esc($usuario->nome) . '"'),
                 'email' => esc($usuario->email),
-                'ativo' => ($usuario->ativo == true ? 'Ativo' : '<span class="text-warning">Inativo</span>'),
+                'ativo' => ($usuario->ativo == true ? '<i class="fa fa-unlock text-success"></i>&nbsp;Ativo' : '<i class="fa fa-lock text-warning"></i>&nbsp;Inativo'),
             ];
         }
 
@@ -53,5 +54,59 @@ class Usuarios extends BaseController
         ];
 
         return $this->response->setJSON($retorno);
+    }
+
+    /*======================================================================= */
+    public function exibir(int $id = NULL)
+    {
+        $usuario = $this->buscaUsuarioOu404($id);
+        $data = [
+            'titulo' => "Detalhando o usuário " . esc($usuario->nome),
+            'usuario' => $usuario
+        ];
+
+        return view('Usuarios/exibir', $data);
+    }
+    /*======================================================================= */
+    public function editar(int $id = NULL)
+    {
+        $usuario = $this->buscaUsuarioOu404($id);
+        $data = [
+            'titulo' => "Editando o usuário " . esc($usuario->nome),
+            'usuario' => $usuario
+        ];
+
+        return view('Usuarios/editar', $data);
+    }
+
+    /*======================================================================= */
+    public function atualizar()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        $retorno['token'] = csrf_hash();
+
+        $retorno['info'] = "Essa é uma mensagem de informação";
+
+        return $this->response->setJSON($retorno);
+
+        $post = $this->request->getPost();
+
+        // printData($post);
+    }
+    /*======================================================================= */
+    /**
+     * Método que recupera o usuário
+     * @param integer id
+     * @return Exceptions | Object
+     */
+    private function buscaUsuarioOu404(int $id = null)
+    {
+        if (!$id || !$usuario = $this->usuarioModel->withDeleted(true)->find($id)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Não encontramos o usuário $id");
+        }
+        return $usuario;
     }
 }
