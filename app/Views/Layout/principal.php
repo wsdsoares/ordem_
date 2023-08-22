@@ -197,7 +197,10 @@
       </div>
       <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
       <ul class="list-unstyled">
-        <li class="active"><a href="index.html"> <i class="icon-home"></i>Home </a></li>
+
+        <li class="<?php echo (url_is('/') ? 'active' : '') ?> "><a href="<?php echo site_url('/') ?>"> <i class="icon-home"></i>Home </a></li>
+        <li class="<?php echo (url_is('usuarios*') ? 'active' : '') ?> "><a href="<?php echo site_url('usuarios') ?>"> <i class="fa fa-users" aria-hidden="true"></i>Usuarios </a></li>
+
         <li><a href="tables.html"> <i class="icon-grid"></i>Tables </a></li>
         <li><a href="charts.html"> <i class="fa fa-bar-chart"></i>Charts </a></li>
         <li><a href="forms.html"> <i class="icon-padnote"></i>Forms </a></li>
@@ -216,6 +219,7 @@
         <li> <a href="#"> <i class="icon-chart"></i>Demo </a></li>
       </ul>
     </nav>
+
     <!-- Sidebar Navigation end-->
     <div class="page-content">
       <div class="page-header">

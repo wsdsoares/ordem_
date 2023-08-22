@@ -13,6 +13,8 @@
 
   <div class="col-lg-12">
     <div class="block">
+      <a href="<?php echo site_url('usuarios/criar'); ?>" class="btn btn-danger btn-sm">Criar novo usuário</a>
+      <hr style="border:1px solid #808080; opacity:0.2">
       <div class="table-responsive">
         <table id="ajaxTable" class="table table-striped table-sm" style="width: 100%;">
           <thead>
