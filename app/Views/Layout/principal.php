@@ -227,6 +227,7 @@
 
         <div class="container-fluid">
           <!-- Espaço reservado para renderizar o conteudo de cada view e extender esse layout -->
+          <?php echo $this->include('Layout/_mensagens'); ?>
           <?php echo $this->renderSection('conteudo'); ?>
         </div>
 

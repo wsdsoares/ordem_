@@ -26,11 +26,47 @@ class UsuarioModel extends Model
     protected $deletedField  = 'deletado_em';
 
     // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
+    protected $validationRules = [
+        'id'                    => 'permit_empty|is_natural_no_zero', // <-- ESSA LINHA DEVE SER ADICIONADA
+        'nome'                  => 'required|min_length[3]|max_length[125]',
+        'email'                 => 'required|valid_email|max_length[230]|is_unique[usuarios.email,id,{id}]', // Não pode ter espaços
+        'password'              => 'required|min_length[6]',
+        'password_confirmation' => 'required_with[password]|matches[password]'
+    ];
+    protected $validationMessages = [
+        'nome' => [
+            'required' => 'O campo nome é obrigatório.',
+            'min_length' => 'O campo nome precisa ter pelo menos 3 cacteres.',
+            'max_length' => 'O campo nome não pode ter mais de 125 cacteres.',
+        ],
+        'email' => [
+            'required' => 'O campo email é obrigatório.',
+            'max_length' => 'O campo nome não pode ter mais de 230 cacteres.',
+            'is_unique' => 'Esse email já está sendo utilizado. Por favor, informe outro.',
+        ],
+        'password' => [
+            'required' => 'O campo senha é obrigatório.',
+            'min_length' => 'O campo senha não pode ter menos de 6 cacteres.',
+        ],
+        'password_confirmation' => [
+            'required_with' => 'Por favor, repita sua senha no campo "confirmação de senha".',
+            'matches'       => 'As senhas precisam ser iguais.',
+        ],
+    ];
 
     // Callbacks
 
-    protected $beforeInsert   = [];
-    protected $beforeUpdate   = [];
+    protected $beforeInsert   = ['hashPassword'];
+    protected $beforeUpdate   = ['hashPassword'];
+
+    protected function hashPassword(array $data)
+    {
+        if (isset($data['data']['password'])) {
+            $data['data']['password_hash'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
+            unset($data['data']['password']);
+            unset($data['data']['password_confirmation']);
+        }
+
+        return $data;
+    }
 }

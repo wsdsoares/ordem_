@@ -86,15 +86,40 @@ class Usuarios extends BaseController
             return redirect()->back();
         }
 
+        //envido o hash do token do form
         $retorno['token'] = csrf_hash();
 
-        $retorno['info'] = "Essa é uma mensagem de informação";
-
-        return $this->response->setJSON($retorno);
-
+        //recuperar o post da requisição
         $post = $this->request->getPost();
 
-        // printData($post);
+        //validando a existência do usuário
+        $usuario = $this->buscaUsuarioOu404($post['id']);
+
+        //se não foi informado a senha removemos o $POST
+        //se não fizermos dessa forma, o hashPassord fará o hash de uma string vazia - Before callbacks model
+        if (empty($post['password'])) {
+            unset($post['password']);
+            unset($post['password_confirmation']);
+        }
+
+        //preenchemos os atributos do usuários com os valores do post
+        $usuario->fill($post);
+
+        if ($usuario->hasChanged() == false) {
+            $retorno['info'] = 'Não há dados para serem atualizados';
+            return $this->response->setJSON($retorno);
+        }
+
+        if ($this->usuarioModel->protect(false)->save($usuario)) {
+            session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+            return $this->response->setJSON($retorno);
+        }
+
+        $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
+        $retorno['erros_model'] = $this->usuarioModel->errors();
+
+        //Retorno para o ajax request
+        return $this->response->setJSON($retorno);
     }
     /*======================================================================= */
     /**
