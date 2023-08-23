@@ -1,12 +1,16 @@
 <?php echo $this->extend('Layout/principal') ?>
-<?php echo $this->section('titulo') ?><?php echo $titulo; ?><?php echo $this->endSection() ?>
+
+
+<?php echo $this->section('titulo') ?>
+<?php echo $titulo; ?>
+<?php echo $this->endSection() ?>
 
 <?php echo $this->section('estilos') ?>
 <!-- Aqui coloco os estilos da view -->
 <?php echo $this->endSection() ?>
 
-
 <?php echo $this->section('conteudo') ?>
+
 <div class="row">
     <div class="col-lg-6">
         <div class="block">
@@ -17,12 +21,13 @@
                 <div id="response">
                 </div>
                 <!-- fim div retornos via ajax -->
+
                 <?php echo form_open('/', ['id' => 'form'], ['id' => "$usuario->id"]) ?>
 
                 <?php echo $this->include('Usuarios/_form'); ?>
                 <div class="form-group mt-5 mb-2">
                     <input id="btn-salvar" type="submit" value="Salvar" class="btn btn-danger btn-sm mr-2">
-                    <a href="<?php echo site_url("usuarios/exibir/$usuario->id"); ?>" class="btn btn-secondary btn-sm ml-2">Voltar</a>
+                    <a href="<?php echo site_url("usuarios"); ?>" class="btn btn-secondary btn-sm ml-2">Voltar</a>
                 </div>
                 <?php echo form_close(); ?>
             </div>
@@ -43,7 +48,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '<?php echo site_url('usuarios/atualizar'); ?>',
+                url: '<?php echo site_url('usuarios/cadastrar'); ?>',
                 data: new FormData(this),
                 dataType: 'json',
                 contentType: false,
@@ -65,7 +70,7 @@
                             $("#response").html('<div class="alert alert-info">' + response.info + '</div>');
                         } else {
                             //tudo certo com a atualização do usuário
-                            window.location.href = "<?php echo site_url("usuarios/exibir/$usuario->id") ?>";
+                            window.location.href = "<?php echo site_url("usuarios/exibir/") ?>" + response.id;
                         }
 
                     }

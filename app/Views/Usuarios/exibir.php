@@ -10,16 +10,13 @@
 <div class="row">
   <div class="col-lg-4">
     <div class="block">
-      <?php
-      echo session('sucesso');
-      ?>
       <div class="text-center">
         <?php if ($usuario->imagem == null) : ?>
           <img src="<?php echo site_url('recursos/img/usuario_sem_imagem.png') ?>" alt="Usuário sem imagem" class="card-img-top" style="width: 90%;">
         <?php else : ?>
           <img src="<?php echo site_url("usuarios/imagem/$usuario->imagem") ?>" alt="<?php echo esc($usuario->nome); ?>" class="card-img-top" style="width: 90%;">
         <?php endif; ?>
-        <a href="<?php site_url("usuarios/editarimagem/$usuario->id") ?>" class="btn btn-outline-primary btn-sm mt-3">Alterar imagem</a>
+        <a href="<?php echo site_url("usuarios/editarimagem/$usuario->id") ?>" class="btn btn-outline-primary btn-sm mt-3">Alterar imagem</a>
       </div>
       <hr class="border-secondary">
 
