@@ -236,40 +236,34 @@ class Usuarios extends BaseController
         $caminhoImagem = WRITEPATH . "uploads/$caminhoImagem";
 
         //Manipular a imagem que está salva no diretório
-
         //Redimensionamento da imagem de 300 x 300 centralizada
-        service('image')
-            ->withFile($caminhoImagem)
-            ->fit(300, 300, 'center')
-            ->save($caminhoImagem);
+        $this->manipulaImagem($caminhoImagem, $usuario->id);
 
+        //a partir daqui será atualizado o BD
 
-        //se não foi informado a senha removemos o $POST
-        //se não fizermos dessa forma, o hashPassord fará o hash de uma string vazia - Before callbacks model
-        if (empty($post['password'])) {
-            unset($post['password']);
-            unset($post['password_confirmation']);
+        $imagemAntiga = $usuario->imagem;
+
+        $usuario->imagem = $imagem->getName();
+        $this->usuarioModel->save($usuario);
+
+        if ($imagemAntiga != null) {
+            $this->removeImagemDoFileSystem($imagemAntiga);
         }
 
-        //preenchemos os atributos do usuários com os valores do post
-        $usuario->fill($post);
-
-        if ($usuario->hasChanged() == false) {
-            $retorno['info'] = 'Não há dados para serem atualizados';
-            return $this->response->setJSON($retorno);
-        }
-
-        if ($this->usuarioModel->protect(false)->save($usuario)) {
-            session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
-            return $this->response->setJSON($retorno);
-        }
-
-        $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
-        $retorno['erros_model'] = $this->usuarioModel->errors();
+        session()->setFlashdata('sucesso', 'Imagem atualizada com sucesso!');
 
         //Retorno para o ajax request
         return $this->response->setJSON($retorno);
     }
+
+    /*======================================================================= */
+    public function imagem(string $imagem = null)
+    {
+        if ($imagem != null) {
+            $this->exibeArquivo('usuarios', $imagem);
+        }
+    }
+
     /*======================================================================= */
     /**
      * Método que recupera o usuário
@@ -282,5 +276,37 @@ class Usuarios extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Não encontramos o usuário $id");
         }
         return $usuario;
+    }
+
+    /*======================================================================= */
+    private function removeImagemDoFileSystem(string $imagem)
+    {
+        $caminhoImagem = WRITEPATH . "uploads/usuarios/$imagem";
+        if (is_file($caminhoImagem)) {
+            unlink($caminhoImagem);
+        }
+    }
+
+    /*======================================================================= */
+    private function manipulaImagem(string $caminhoImagem, int $usuario_id)
+    {
+        service('image')
+            ->withFile($caminhoImagem)
+            ->fit(300, 300, 'center')
+            ->save($caminhoImagem);
+
+        $anoAtual = date('Y');
+        // Adicionar uma marca d'agua de texto
+        \Config\Services::image('imagick')
+            ->withFile($caminhoImagem)
+            ->text("Ordem $anoAtual - User-ID $usuario_id", [
+                'color'      => '#fff',
+                'opacity'    => 0.5,
+                'withShadow' => false,
+                'hAlign'     => 'center',
+                'vAlign'     => 'bottom',
+                'fontSize'   => 10,
+            ])
+            ->save($caminhoImagem);
     }
 }
