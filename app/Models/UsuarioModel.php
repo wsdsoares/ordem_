@@ -55,7 +55,6 @@ class UsuarioModel extends Model
     ];
 
     // Callbacks
-
     protected $beforeInsert   = ['hashPassword'];
     protected $beforeUpdate   = ['hashPassword'];
 

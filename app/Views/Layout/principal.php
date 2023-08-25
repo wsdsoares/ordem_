@@ -199,7 +199,8 @@
       <ul class="list-unstyled">
 
         <li class="<?php echo (url_is('/') ? 'active' : '') ?> "><a href="<?php echo site_url('/') ?>"> <i class="icon-home"></i>Home </a></li>
-        <li class="<?php echo (url_is('usuarios*') ? 'active' : '') ?> "><a href="<?php echo site_url('usuarios') ?>"> <i class="fa fa-users" aria-hidden="true"></i>Usuarios </a></li>
+        <li class="<?php echo (url_is('usuarios*') ? 'active' : '') ?> "><a href="<?php echo site_url('usuarios') ?>"> <i class="fa fa-users"></i>Usuarios </a></li>
+        <li class="<?php echo (url_is('grupos*') ? 'active' : '') ?> "><a href="<?php echo site_url('grupos') ?>"> <i class="fa fa-sliders" aria-hidden="true"></i>Grupos e Permissões </a></li>
 
         <li><a href="tables.html"> <i class="icon-grid"></i>Tables </a></li>
         <li><a href="charts.html"> <i class="fa fa-bar-chart"></i>Charts </a></li>
@@ -255,6 +256,13 @@
 
   <!-- Espaço reservado para renderizar os scripts de cada view e extender esse layout -->
   <?php echo $this->renderSection('scripts'); ?>
+  <script>
+    $(function() {
+      $('[data-toggle="popover"]').popover({
+        html: true,
+      })
+    })
+  </script>
 </body>
 
 </html>
