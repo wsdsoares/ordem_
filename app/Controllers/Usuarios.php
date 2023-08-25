@@ -31,10 +31,11 @@ class Usuarios extends BaseController
             return redirect()->back();
         }
 
-        $atributos = ['id', 'nome', 'email', 'ativo', 'imagem'];
+        $atributos = ['id', 'nome', 'email', 'ativo', 'imagem', 'deletado_em'];
 
         $usuarios =
             $this->usuarioModel->select($atributos)
+            ->withDeleted(true)
             ->orderBy('id', 'DESC')
             ->findAll();
 
@@ -62,7 +63,8 @@ class Usuarios extends BaseController
                 'imagem' => $usuario->imagem = img($imagem),
                 'nome' => anchor("usuarios/exibir/$usuario->id", esc($usuario->nome), 'title="Exibir usuário ' . esc($usuario->nome) . '"'),
                 'email' => esc($usuario->email),
-                'ativo' => ($usuario->ativo == true ? '<i class="fa fa-unlock text-success"></i>&nbsp;Ativo' : '<i class="fa fa-lock text-warning"></i>&nbsp;Inativo'),
+                // 'ativo' => ($usuario->ativo == true ? '<i class="fa fa-unlock text-success"></i>&nbsp;Ativo' : '<i class="fa fa-lock text-warning"></i>&nbsp;Inativo'),
+                'ativo' => $usuario->exibeSituacao(),
             ];
         }
 
@@ -276,6 +278,53 @@ class Usuarios extends BaseController
         if ($imagem != null) {
             $this->exibeArquivo('usuarios', $imagem);
         }
+    }
+
+
+    /*======================================================================= */
+    public function excluir(int $id = NULL)
+    {
+        $usuario = $this->buscaUsuarioOu404($id);
+
+        if ($usuario->deletado_em != null) {
+            return redirect()->back()->with('info', "Esse usuário já encontra-se Excluído!");
+        }
+
+        if ($this->request->getMethod() === 'post') {
+            $this->usuarioModel->delete($usuario->id);
+            if ($usuario->imagem != null) {
+                $this->removeImagemDoFileSystem($usuario->imagem);
+            }
+
+            $usuario->imagem = null;
+            $usuario->ativo = false;
+
+            $this->usuarioModel->protect(false)->save($usuario);
+
+            return redirect()->to(site_url('usuarios'))->with('sucesso', "Usuário $usuario->nome excluído com sucesso!");
+        }
+
+        $data = [
+            'titulo' => "Excluindo o usuário " . esc($usuario->nome),
+            'usuario' => $usuario
+        ];
+
+        return view('Usuarios/excluir', $data);
+    }
+
+    /*======================================================================= */
+    public function desfazerexclusao(int $id = NULL)
+    {
+        $usuario = $this->buscaUsuarioOu404($id);
+
+        if ($usuario->deletado_em == null) {
+            return redirect()->back()->with('info', "Apenas usuários excluídos podem ser recuperados!");
+        }
+
+        $usuario->deletado_em = null;
+
+        $this->usuarioModel->protect(false)->save($usuario);
+        return redirect()->back()->with('sucesso', "Usuário $usuario->nome recuperado com sucesso!");
     }
 
     /*======================================================================= */
