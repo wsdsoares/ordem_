@@ -23,7 +23,7 @@ class GrupoModel extends Model
     protected $validationRules = [
         'id'                    => 'permit_empty|is_natural_no_zero', // <-- ESSA LINHA DEVE SER ADICIONADA
         'nome'                  => 'required|max_length[128]|is_unique[grupos.nome,id,{id}]',
-        'descricao'             => 'required|min_length[240]',
+        'descricao'             => 'required|max_length[240]',
     ];
     protected $validationMessages = [
         'nome' => [

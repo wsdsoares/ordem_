@@ -6,36 +6,32 @@ use CodeIgniter\Model;
 
 class GrupoPermissaoModel extends Model
 {
-    protected $DBGroup          = 'default';
-    protected $table            = 'grupopermissaos';
-    protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $table            = 'grupos_permissoes';
+    protected $returnType       = 'object';
+    protected $allowedFields    = ['grupo_id', 'permissao_id'];
 
-    // Dates
-    protected $useTimestamps = false;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    /**
+     * Método que recupera as permissões do grupo de acesso
+     * 
+     * @param integer $grupo_id
+     * @param integer $quantidade_paginacao
+     * @return array | null
+     */
 
-    // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
+    public function recuperaPermissoesDoGrupo(int $grupo_id, int $quantidade_paginacao)
+    {
+        $atributos = [
+            'grupos_permissoes.id',
+            'grupos.id AS grupo_id',
+            'permissoes.id AS permissao_id',
+            'permissoes.nome',
+        ];
 
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+        return $this->select($atributos)
+            ->join('grupos', 'grupos.id = grupos_permissoes.grupo_id')
+            ->join('permissoes', 'permissoes.id = grupos_permissoes.permissao_id')
+            ->where('grupos_permissoes.grupo_id', $grupo_id)
+            ->groupBy('permissoes.nome')
+            ->paginate($quantidade_paginacao);
+    }
 }

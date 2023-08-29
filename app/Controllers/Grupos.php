@@ -8,10 +8,12 @@ use App\Entities\Grupo;
 class Grupos extends BaseController
 {
     private $grupoModel;
+    private $grupoPermissaoModel;
 
     public function __construct()
     {
         $this->grupoModel = new \App\Models\GrupoModel();
+        $this->grupoPermissaoModel = new \App\Models\GrupoPermissaoModel();
     }
 
     /*======================================================================= */
@@ -102,7 +104,6 @@ class Grupos extends BaseController
         return $this->response->setJSON($retorno);
     }
 
-
     /*======================================================================= */
     public function exibir(int $id = NULL)
     {
@@ -175,6 +176,78 @@ class Grupos extends BaseController
         //Retorno para o ajax request
         return $this->response->setJSON($retorno);
     }
+
+    /*======================================================================= */
+    public function excluir(int $id = NULL)
+    {
+        $grupo = $this->buscaGrupoOu404($id);
+
+        if ($grupo->id < 3) {
+            return redirect()->back()->with('atencao', 'O grupo <b>' . esc($grupo->nome) . '</b> não pode ser editado ou excluído, conforme detalhado na exibição do mesmo');
+        }
+
+        if ($grupo->deletado_em != null) {
+            return redirect()->back()->with('info', "Esse grupo de acesso já encontra-se Excluído!");
+        }
+
+        if ($this->request->getMethod() === 'post') {
+            $this->grupoModel->delete($grupo->id);
+
+            return redirect()->to(site_url('grupos'))->with('sucesso', 'Grupo de acesso' . esc($grupo->nome) . 'excluído com sucesso!');
+        }
+
+        $data = [
+            'titulo' => "Excluindo o grupo de acesso " . esc($grupo->nome),
+            'grupo' => $grupo
+        ];
+
+        return view('Grupos/excluir', $data);
+    }
+
+    /*======================================================================= */
+    public function desfazerexclusao(int $id = NULL)
+    {
+        $grupo = $this->buscaGrupoOu404($id);
+
+        if ($grupo->deletado_em == null) {
+            return redirect()->back()->with('info', "Apenas grupos excluídos podem ser recuperados!");
+        }
+
+        $grupo->deletado_em = null;
+
+        $this->grupoModel->protect(false)->save($grupo);
+        return redirect()->back()->with('sucesso', 'Grupo ' . esc($grupo->nome) . 'recuperado com sucesso!');
+    }
+
+    /*======================================================================= */
+    public function permissoes(int $id = NULL)
+    {
+        $grupo = $this->buscaGrupoOu404($id);
+
+        if ($grupo->id == 1) {
+            return redirect()->back()->with('atencao', 'Não é nessário atribuir ou remover permissões de acesso para o grupo <b>' . esc($grupo->nome) . '</b>, pois esse grupo é Administrador!');
+        }
+
+        if ($grupo->id == 2) {
+            return redirect()->back()->with('atencao', 'Não é nessário atribuir ou remover permissões de acesso para o grupo <b>' . esc($grupo->nome) . '</b>!');
+        }
+
+        //recuperação das permissoes
+        if ($grupo->id == 2) {
+            $grupo->permissoes = $this->grupoPermissaoModel->recuperaPermissoesDoGrupo($grupo->id, 5);
+            $grupo->pager = $this->grupoPermissaoModel->pager;
+        }
+
+        dd($grupo);
+
+        $data = [
+            'titulo' => "Gerenciando as permissões do grupo de acesso " . esc($grupo->nome),
+            'grupo' => $grupo
+        ];
+
+        return view('Grupos/permissoes', $data);
+    }
+
     /*======================================================================= */
     /**
      * Método que recupera o grupo
