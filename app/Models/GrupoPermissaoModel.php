@@ -24,7 +24,7 @@ class GrupoPermissaoModel extends Model
             'grupos_permissoes.id',
             'grupos.id AS grupo_id',
             'permissoes.id AS permissao_id',
-            'permissoes.nome',
+            'permissoes.nome as nome',
         ];
 
         return $this->select($atributos)
