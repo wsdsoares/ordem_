@@ -257,6 +257,47 @@ class Grupos extends BaseController
     }
 
     /*======================================================================= */
+    public function salvarpermissoes()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        //envido o hash do token do form
+        $retorno['token'] = csrf_hash();
+
+        //recuperar o post da requisição
+        $post = $this->request->getPost();
+
+        //validando a existência do usuário
+        $grupo = $this->buscaGrupoOu404($post['id']);
+
+
+        if (empty($post['permissao_id'])) {
+            $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
+            $retorno['erros_model'] = ['permissao_id' => 'Escolha uma ou mais permissões para salvar!'];
+
+            //Retorno para o ajax request
+            return $this->response->setJSON($retorno);
+        }
+
+        //Receberá as permissões do POST
+        $permissaoPush = [];
+
+        foreach ($post['permissao_id'] as $permissao) {
+            array_push($permissaoPush, [
+                'grupo_id' => $grupo->id,
+                'permissao_id' => $permissao->id
+            ]);
+        }
+
+        echo '<pre>';
+        echo '<scsript>alert("TExtando")</scsript>';
+        print_r($permissaoPush);
+        exit;
+    }
+
+    /*======================================================================= */
     /**
      * Método que recupera o grupo
      * @param integer id
