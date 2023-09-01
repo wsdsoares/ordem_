@@ -8,10 +8,14 @@ use App\Entities\Usuario;
 class Usuarios extends BaseController
 {
     private $usuarioModel;
+    private $grupoUsuarioModel;
+    private $grupoModel;
 
     public function __construct()
     {
         $this->usuarioModel = new \App\Models\UsuarioModel();
+        $this->grupoUsuarioModel = new \App\Models\GrupoUsuarioModel();
+        $this->grupoModel = new \App\Models\GrupoModel();
     }
 
     /*======================================================================= */
@@ -280,7 +284,6 @@ class Usuarios extends BaseController
         }
     }
 
-
     /*======================================================================= */
     public function excluir(int $id = NULL)
     {
@@ -325,6 +328,74 @@ class Usuarios extends BaseController
 
         $this->usuarioModel->protect(false)->save($usuario);
         return redirect()->back()->with('sucesso', "Usuário $usuario->nome recuperado com sucesso!");
+    }
+
+    /*======================================================================= */
+    public function grupos(int $id = NULL)
+    {
+        $usuario = $this->buscaUsuarioOu404($id);
+
+        $usuario->grupos = $this->grupoUsuarioModel->recuperaGruposDoUsuario($usuario->id, 5);
+        $usuario->pager = $this->grupoUsuarioModel->pager;
+
+        $data = [
+            'titulo' => "Gerenciando os grupos de acesso do usuário " . esc($usuario->nome),
+            'usuario' => $usuario
+        ];
+
+
+        //Quando o usuário for um cliente, podemos retornar a view de exibição do usuário, 
+        //informando que ele é um cliente e não é possível adicioná-los aos outros grupos ou remover de um grupo existe.
+        if (in_array(2, array_column($usuario->grupos, 'grupo_id'))) {
+            return redirect()->to(site_url("usuarios/exibir/$usuario->id"))
+                ->with('info', "Esse usuário é um cliente, portanto, não é necessário atribuí-lo ou removê-lo de outros grupos de acesso");
+        }
+
+        if (!empty($usuario->grupos)) {
+            //recuperamos os grupos que o usuário ainda não faz parte
+            $gruposExistentes = array_column($usuario->grupos, 'grupo_id');
+
+
+            $data['gruposDisponiveis'] = $this->grupoModel
+                ->where('id !=', 2)   //Não recuperamos o gurpo de clientesdd
+                ->whereNotIn('id', $gruposExistentes)
+                ->findAll();
+        } else {
+            // recuperamos todos os grupos, cin exceção do grupo ID 2, do usuário
+            $data['gruposDisponiveis'] = $this->grupoModel
+                ->where('id !=', 2)
+                ->findAll();
+        }
+
+        return view('Usuarios/grupos', $data);
+    }
+    /*======================================================================= */
+    public function salvarGrupos()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        //envido o hash do token do form
+        $retorno['token'] = csrf_hash();
+
+        //recuperar o post da requisição
+        $post = $this->request->getPost();
+
+        //validando a existência do usuário
+        $usuario = $this->buscaUsuarioOu404($post['id']);
+
+        if (empty($post['grupo_id'])) {
+            $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
+            $retorno['erros_model'] = ['grupo_id' => 'Escolha um ou mais grupos para salvar!'];
+
+            //Retorno para o ajax request
+            return $this->response->setJSON($retorno);
+        }
+
+        if(){
+            
+        }
     }
 
     /*======================================================================= */

@@ -11,7 +11,8 @@ class GrupoPermissaoModel extends Model
     protected $allowedFields    = ['grupo_id', 'permissao_id'];
 
     /**
-     * Método que recupera as permissões do grupo de acesso
+     * Método que recupera os grupos de acesso do usuário informado.
+     * Utilizado no controller de usuários
      * 
      * @param integer $grupo_id
      * @param integer $quantidade_paginacao
@@ -21,7 +22,7 @@ class GrupoPermissaoModel extends Model
     public function recuperaPermissoesDoGrupo(int $grupo_id, int $quantidade_paginacao)
     {
         $atributos = [
-            'grupos_permissoes.id',
+            'grupos_permissoes.id AS principal_id',
             'grupos.id AS grupo_id',
             'permissoes.id AS permissao_id',
             'permissoes.nome as nome',

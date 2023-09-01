@@ -257,7 +257,7 @@ class Grupos extends BaseController
     }
 
     /*======================================================================= */
-    public function salvarpermissoes()
+    public function salvarPermissoes()
     {
         if (!$this->request->isAJAX()) {
             return redirect()->back();
@@ -284,17 +284,34 @@ class Grupos extends BaseController
         //Receberá as permissões do POST
         $permissaoPush = [];
 
+
         foreach ($post['permissao_id'] as $permissao) {
             array_push($permissaoPush, [
                 'grupo_id' => $grupo->id,
-                'permissao_id' => $permissao->id
+                'permissao_id' => $permissao
             ]);
         }
 
-        echo '<pre>';
-        echo '<scsript>alert("TExtando")</scsript>';
-        print_r($permissaoPush);
-        exit;
+        $this->grupoPermissaoModel->insertBatch($permissaoPush);
+
+        session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+        return $this->response->setJSON($retorno);
+    }
+    /*======================================================================= */
+    public function removePermissao(int $principal_id = NULL)
+    {
+
+        //colocar depois uma validação para saber se o principal_id existe.
+
+        //excluindo a permissão
+        if ($this->request->getMethod() === 'post') {
+            $this->grupoPermissaoModel->delete($principal_id);
+
+            return redirect()->back()->with('sucesso', 'Permissão removida com sucesso!');
+        }
+
+        //Não é POST - Validação
+        return redirect()->back();
     }
 
     /*======================================================================= */

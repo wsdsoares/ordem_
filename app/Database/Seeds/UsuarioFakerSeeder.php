@@ -23,10 +23,6 @@ class UsuarioFakerSeeder extends Seeder
                 'ativo' => $faker->numberBetween(0, 1),
             ]);
         }
-        // echo '<pre>';
-        // print_r($usuriosPush);
-        // echo '</pre>';
-        // exit;
 
         $usuarioModel->skipValidation(true)
             ->protect(false)

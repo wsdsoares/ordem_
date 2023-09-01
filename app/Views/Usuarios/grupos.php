@@ -33,9 +33,9 @@
 
     <div class="user-block block">
 
-      <?php if (empty($permissoesDisponiveis)) : ?>
+      <?php if (empty($gruposDisponiveis)) : ?>
 
-        <p class="contributions text-info mt-0">Esse grupo já possui todas as permissões de acesso, disponíveis! </p>
+        <p class="contributions text-info mt-0">Esse usuário já faz parte de todos os grupos disponíveis! </p>
 
       <?php else : ?>
 
@@ -43,14 +43,14 @@
         <div id="response">
         </div><!-- fim div retornos via ajax -->
 
-        <?php echo form_open('/', ['id' => 'form'], ['id' => "$grupo->id"]) ?>
+        <?php echo form_open('/', ['id' => 'form'], ['id' => "$usuario->id"]) ?>
 
         <div class="form-group">
-          <label class="form-control-label">Escolha uma ou mais permissões</label>
-          <select name="permissao_id[]" multiple class="selectize">
+          <label class="form-control-label">Escolha um ou mais grupos</label>
+          <select name="grupo_id[]" multiple class="selectize">
             <option value="">Escolha</option>
-            <?php foreach ($permissoesDisponiveis as $permissao) : ?>
-              <option value="<?php echo $permissao->id; ?>"><?php echo esc($permissao->nome) ?></option>
+            <?php foreach ($gruposDisponiveis as $grupo) : ?>
+              <option value="<?php echo $grupo->id; ?>"><?php echo esc($grupo->nome) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -59,7 +59,7 @@
 
         <div class="form-group mt-5 mb-2">
           <input id="btn-salvar" type="submit" value="Salvar" class="btn btn-danger btn-sm mr-2">
-          <a href="<?php echo site_url("grupos/exibir/$grupo->id"); ?>" class="btn btn-secondary btn-sm ml-2">Voltar</a>
+          <a href="<?php echo site_url("usuarios/exibir/$usuario->id"); ?>" class="btn btn-secondary btn-sm ml-2">Voltar</a>
         </div>
         <?php echo form_close(); ?>
 
@@ -68,33 +68,35 @@
 
     </div>
   </div>
-  <div class="col-lg-4">
+  <div class="col-lg-8">
     <div class="user-block block">
 
-      <?php if (empty($grupo->permissoes)) : ?>
+      <?php if (empty($usuario->grupos)) : ?>
 
-        <p class="contributions text-warning mt-0">Esse grupo ainda não possui permissões de acesso! </p>
+        <p class="contributions text-warning mt-0">Esse usuário não faz parte de nenhum grupo de acesso! </p>
       <?php else : ?>
         <div class="table-responsive">
           <table class="table table-striped table-sm">
             <thead>
               <tr>
-                <th>Permissao</th>
+                <th>Grupo de acesso</th>
+                <th>Descrição</th>
                 <th>Excluir</th>
               </tr>
             </thead>
             <tbody>
 
-              <?php foreach ($grupo->permissoes as $permissao) : ?>
+              <?php foreach ($usuario->grupos as $info) : ?>
                 <tr>
-                  <td><?php echo esc($permissao->nome); ?></td>
+                  <td><?php echo esc($info->nome); ?></td>
+                  <td><?php echo ellipsize($info->descricao, 32, .5); ?></td>
                   <td>
                     <?php
                     $atributos = [
-                      'onSubmit' => "return confirm('Tem certeza da exclusão da permissão?');",
+                      'onSubmit' => "return confirm('Tem certeza da exclusão do grupo de acesso?');",
                     ];
                     ?>
-                    <?php echo form_open("grupos/removepermissao/$permissao->principal_id", $atributos) ?>
+                    <?php echo form_open("usuarios/removegrupo/$info->principal_id", $atributos) ?>
                     <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
 
                     <?php echo form_close(); ?>
@@ -105,7 +107,7 @@
             </tbody>
           </table>
           <div class="mt-3 ml-1">
-            <?php echo $grupo->pager->links(); ?>
+            <?php echo $usuario->pager->links(); ?>
           </div>
         </div>
       <?php endif; ?>
@@ -130,7 +132,7 @@
 
       $.ajax({
         type: 'POST',
-        url: '<?php echo site_url('grupos/salvarpermissoes'); ?>',
+        url: '<?php echo site_url('usuarios/salvargrupos'); ?>',
         data: new FormData(this),
         dataType: 'json',
         contentType: false,
@@ -147,7 +149,7 @@
           $('[name=csrf_ordem]').val(response.token);
 
           if (!response.erro) {
-            window.location.href = "<?php echo site_url("grupos/permissoes/$grupo->id") ?>";
+            window.location.href = "<?php echo site_url("usuarios/grupos/$usuario->id") ?>";
           }
           if (response.erro) {
             $("#response").html('<div class="alert alert-danger">' + response.erro + '</div>');
