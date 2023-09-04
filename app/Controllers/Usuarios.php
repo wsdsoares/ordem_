@@ -346,10 +346,17 @@ class Usuarios extends BaseController
 
         //Quando o usuário for um cliente, podemos retornar a view de exibição do usuário, 
         //informando que ele é um cliente e não é possível adicioná-los aos outros grupos ou remover de um grupo existe.
-        if (in_array(2, array_column($usuario->grupos, 'grupo_id'))) {
+        $grupoCliente = 2;
+        if (in_array($grupoCliente, array_column($usuario->grupos, 'grupo_id'))) {
             return redirect()->to(site_url("usuarios/exibir/$usuario->id"))
                 ->with('info', "Esse usuário é um cliente, portanto, não é necessário atribuí-lo ou removê-lo de outros grupos de acesso");
         }
+        $grupoAdmin = 1;
+        if (in_array($grupoAdmin, array_column($usuario->grupos, 'grupo_id'))) {
+            $usuario->full_control = true; //está no grupo de admin, então podemos retornar a view
+            return view('Usuarios/grupos', $data);
+        }
+        $usuario->full_control = false; // não está no grupo admin, podemos seguir com o processamento
 
         if (!empty($usuario->grupos)) {
             //recuperamos os grupos que o usuário ainda não faz parte
@@ -393,11 +400,63 @@ class Usuarios extends BaseController
             return $this->response->setJSON($retorno);
         }
 
-        if(){
-            
-        }
-    }
+        if (in_array(2, $post['grupo_id'])) {
+            $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
+            $retorno['erros_model'] = ['grupo_id' => 'O grupo de clientes não pode ser atribuido de forma manual'];
 
+            //Retorno para o ajax request
+            return $this->response->setJSON($retorno);
+        }
+
+        // se vier o grupo adm, os demais são irrelevantes, pelo fato do adm ter todas as permissões
+        if (in_array(1, $post['grupo_id'])) {
+            $grupoAdmin = [
+                'grupo_id' => 1,
+                'usuario_id' => $usuario->id
+            ];
+
+            //associamos o usuário ao grupo vindo da view
+            $this->grupoUsuarioModel->insert($grupoAdmin);
+            //remove todos os demais grupos que estão associados ao usuário em questão
+            $this->grupoUsuarioModel->where('grupo_id !=', 1)
+                ->where('usuario_id =', $usuario->id)
+                ->delete();
+
+            session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+            session()->setFlashdata('info', 'Notamos que o grupo ADMINISTRADOR foi informado, portanto não há a necessidade de informar outros grupos, pois apenas o Grupo ADMINISTRADOR será associado ao usuário!');
+            return $this->response->setJSON($retorno);
+        }
+
+        //Receberá as permissões do POST
+        $grupoPush = [];
+
+        foreach ($post['grupo_id'] as $grupo) {
+            array_push($grupoPush, [
+                'grupo_id' => $grupo,
+                'usuario_id' => $usuario->id
+            ]);
+        }
+
+        $this->grupoUsuarioModel->insertBatch($grupoPush);
+
+        session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+        return $this->response->setJSON($retorno);
+    }
+    /*======================================================================= */
+    public function removeGrupo(int $principal_id = null)
+    {
+        if ($this->request->getMethod() === 'post') {
+            $grupoUsuario = $this->buscaGrupoUsuarioOu404($principal_id);
+            if ($grupoUsuario->grupo_id == 2) {
+                return redirect()->to(site_url("usuarios/exibir/$grupoUsuario->usuario_id"))->with("info", "Não é permitida a exclusão do usuário Grupo CLIENTES");
+            }
+
+            $this->grupoUsuarioModel->delete($principal_id);
+            return redirect()->back()->with("sucesso", "Usuário removido do grupo de acesso com sucesso!");
+        }
+
+        return redirect()->back();
+    }
     /*======================================================================= */
     /**
      * Método que recupera o usuário
@@ -411,6 +470,23 @@ class Usuarios extends BaseController
         }
         return $usuario;
     }
+
+    /*======================================================================= */
+    /**
+     * Método que recupera o registro do grupo associado ao usuário
+     * @param integer $principal)id
+     * @return Exception|Object
+     */
+
+    private function buscaGrupoUsuarioOu404(int $principal_id = null)
+    {
+        if (!$principal_id || !$grupoUsuario = $this->grupoUsuarioModel->find($principal_id)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Não encontramos o registro de associação ao grupo de acesso $principal_id");
+        }
+        return $grupoUsuario;
+    }
+
+    /*======================================================================= */
 
     /*======================================================================= */
     private function removeImagemDoFileSystem(string $imagem)

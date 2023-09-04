@@ -35,7 +35,12 @@
 
       <?php if (empty($gruposDisponiveis)) : ?>
 
-        <p class="contributions text-info mt-0">Esse usuário já faz parte de todos os grupos disponíveis! </p>
+        <?php if ($usuario->full_control == false) : ?>
+          <p class="contributions text-info mt-0">Esse usuário já faz parte de todos os grupos disponíveis! </p>
+        <?php else : ?>
+          <p class="contributions text-white mt-0">Esse usuário já faz parte do grupo ADMINISTRADOR. <br />Para associá-lo a outros grupos, primeiro remova-o do grupo ADMINISTRADOR. </p>
+        <?php endif; ?>
+
 
       <?php else : ?>
 
