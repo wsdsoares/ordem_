@@ -486,7 +486,7 @@ class Usuarios extends BaseController
         return $grupoUsuario;
     }
 
-    /*======================================================================= */
+
 
     /*======================================================================= */
     private function removeImagemDoFileSystem(string $imagem)

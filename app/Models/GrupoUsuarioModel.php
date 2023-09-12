@@ -27,4 +27,18 @@ class GrupoUsuarioModel extends Model
             ->groupBy('grupos.nome')
             ->paginate($quantidade_paginacao);
     }
+
+    /**
+     * Método que recupera o grupo do usuário 
+     * IMPORTANTE! Usado apenas definir se é um cliente ou um administrador
+     * @param int $grupo_id 
+     * @param int $usuario_id
+     * @return null|object
+     */
+    public function usuarioEstaNoGrupo(int $grupo_id, int $usuario_id)
+    {
+        return $this->where('grupo_id', $grupo_id)
+            ->where('usuario_id', $usuario_id)
+            ->first();
+    }
 }
