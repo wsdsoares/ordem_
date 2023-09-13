@@ -110,17 +110,21 @@ class Autenticacao
       return null;
     }
 
+    //definimos as permissoes do usuário logado
+    $usuario = $this->definiePermissoesDoUsuarioLogado($usuario);
+
     return $usuario;
   }
 
+
+
   /*======================================================================= */
   /**
-   * Método que verifica se o usuário logado está asssociado ao grupo de ADMIN
+   * Método que verifica se o usuário na sessão (session()->get('usuario_id')) logado está asssociado ao grupo de ADMIN
    * @return null|object
    */
 
-  // 33 98807-55698 empresa autorizada a realizar o serviço
-  public function isAdmin(): bool
+  private function isAdmin(): bool
   {
     //Definimos o ID do grupo ADMIN
     //Esse ID não pode ser alterado
@@ -135,5 +139,87 @@ class Autenticacao
     }
 
     return true;
+  }
+
+
+
+  /*======================================================================= */
+  /**
+   * Método que verifica se o usuário na sessão (session()->get('usuario_id')) logado está asssociado ao grupo de CLIENTE
+   * @return null|object
+   */
+
+  private function isCliente(): bool
+  {
+    //Definimos o ID do grupo ADMIN
+    //Esse ID não pode ser alterado
+    $grupoCliente = 2;
+
+    //verifica se o usuário logado está no grupo Cliente
+    $cliente = $this->grupoUsuarioModel->usuarioEstaNoGrupo($grupoCliente, session()->get('usuario_id'));
+
+    //Verifica se foi encontrado algum registro
+    if ($cliente == null) {
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /*======================================================================= */
+  /**
+   * Método que define as permissoes que o usuário logado possui
+   * Usuário exclusivamente no método pegaUsuarioda sessão
+   * @param object $usuario
+   * @return null|object
+   */
+
+
+  public function definiePermissoesDoUsuarioLogado(object $usuario): object
+  {
+    //definimos se o usuário logado é ADM
+    //esse atributo será utilizado no metodo temPermissao() na entity Usuario
+    $usuario->is_admin = $this->isAdmin();
+
+    //se for ADM então não é cliente
+    if ($usuario->is_admin == true) {
+      $usuario->is_cliente = false;
+    } else {
+
+      //nesse ponto verifica se o usuário é um cliente, visto que não é um ADM
+      $usuario->is_cliente = $this->isCliente();
+    }
+
+    //Só recuperamos as permissoes de um usuário que não seja admin e não seja cliente
+    //pois esses dois grupos não possuem permissoes
+    //o atributo $usuario->permissoes será examinado na Entity Usuario para verificarmos se 
+    //o mesmo pode ou não visualizar e acessar alguma rota
+    // se o usuário logado possui o atributo $usuario->permissoes é porque não é ADMIN e não é CLIENTE
+    if ($usuario->is_admin == false && $usuario->is_cliente == false) {
+      $usuario->permissoes = $this->recuperaPermissoesDoUsuarioLogado();
+    }
+
+    // Nesse ponto já definimos se é admin ou se é cliente
+    // caso não seja nem admin e nem cliente, entã o objetopossui o atributo permissões
+    // que pode ou não estar vazio
+    // Portanto, podemos retornar $usuario
+    return $usuario;
+  }
+
+
+
+
+  /*======================================================================= */
+  /**
+   * Método que retorna as permissoes do usuário logado 
+   * @return array
+   */
+
+  private function recuperaPermissoesDoUsuarioLogado(): array
+  {
+    $permissoesDoUsuario = $this->usuarioModel->recuperaPermissoesDoUsuarioLogado(session()->get('usuario_id'));
+
+    return array_column($permissoesDoUsuario, 'permissao');
   }
 }
