@@ -88,9 +88,9 @@ class UsuarioModel extends Model
     public function recuperaPermissoesDoUsuarioLogado(int $usuario_id)
     {
         $atributos = [
-            'usuarios.id',
-            'usuarios.nome AS usuario',
-            'grupos_usuarios.*',
+            // 'usuarios.id',
+            // 'usuarios.nome AS usuario',
+            // 'grupos_usuarios.*',
             'permissoes.nome AS permissao',
         ];
 

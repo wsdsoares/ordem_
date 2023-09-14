@@ -16,11 +16,12 @@ class Home extends BaseController
 
     public function login()
     {
-        $autenticacao = new Autenticacao();
+        $autenticacao = service('autenticacao');
         // $autenticacao->login('asd@email.com', '123456');
-        $autenticacao->login('asd@email.com', '123456');
-        // dd($autenticacao->pegaUsuarioLogado());
+        $autenticacao->login('email@hotmail.com', '123456');
+        $usuario  = $autenticacao->pegaUsuarioLogado();
 
+        dd($usuario);
 
         // $autenticacao->logout();
         // return redirect()->to(site_url('/'));

@@ -179,7 +179,7 @@ class Autenticacao
   public function definiePermissoesDoUsuarioLogado(object $usuario): object
   {
     //definimos se o usuário logado é ADM
-    //esse atributo será utilizado no metodo temPermissao() na entity Usuario
+    //esse atributo será utilizado no metodo temPermissaoPara() na entity Usuario
     $usuario->is_admin = $this->isAdmin();
 
     //se for ADM então não é cliente
