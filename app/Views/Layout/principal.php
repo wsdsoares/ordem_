@@ -17,7 +17,7 @@
   <!-- Google fonts - Muli-->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
   <!-- theme stylesheet-->
-  <link rel="stylesheet" href="<?= site_url('recursos/') ?>css/style.default.css" id="theme-stylesheet">
+  <link rel="stylesheet" href="<?= site_url('recursos/') ?>css/style.green.css" id="theme-stylesheet">
   <!-- Custom stylesheet - for your changes-->
   <link rel="stylesheet" href="<?= site_url('recursos/') ?>css/custom.css">
   <!-- Favicon-->
@@ -179,7 +179,9 @@
             <div aria-labelledby="languages" class="dropdown-menu"><a rel="nofollow" href="#" class="dropdown-item"> <img src="img/flags/16/DE.png" alt="English" class="mr-2"><span>German</span></a><a rel="nofollow" href="#" class="dropdown-item"> <img src="img/flags/16/FR.png" alt="English" class="mr-2"><span>French </span></a></div>
           </div>
           <!-- Log out               -->
-          <div class="list-inline-item logout"> <a id="logout" href="login.html" class="nav-link">Logout <i class="icon-logout"></i></a></div>
+          <div class="list-inline-item logout">
+            <a id="logout" href="<?php echo site_url('logout'); ?>" class="nav-link">Sair <i class="icon-logout"></i></a>
+          </div>
         </div>
       </div>
     </nav>
