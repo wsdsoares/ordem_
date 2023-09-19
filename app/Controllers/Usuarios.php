@@ -457,6 +457,33 @@ class Usuarios extends BaseController
 
         return redirect()->back();
     }
+
+    /*======================================================================= */
+    public function editarSenha()
+    {
+        $data = [
+            'titulo' => 'Edite sua senha de acesso'
+        ];
+        return view('Usuarios/editar_senha', $data);
+    }
+
+    public function atualizarsenha()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        //envido o hash do token do form
+        $retorno['token'] = csrf_hash();
+
+        //recuperar o post da requisição
+        //$post = $this->request->getPost();
+        echo '<pre>';
+        print_r($this->request->getPost());
+        exit;
+        echo '</pre>';
+    }
+
     /*======================================================================= */
     /**
      * Método que recupera o usuário

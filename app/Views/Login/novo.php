@@ -99,17 +99,18 @@
           processData: false,
           beforeSend: function() {
             $("#response").html('');
-            $("#btn-lgoin").val('Por favor, aguarde...');
+            $("#btn-login").val('Por favor, aguarde...');
           },
           success: function(response) {
-            $("#btn-lgoin").val('Salvar');
-            $("#btn-lgoin").removeAttr("disabled");
+            $("#btn-login").val('Entrar');
+            $("#btn-login").removeAttr("disabled");
 
             $('[name=csrf_ordem]').val(response.token);
 
             if (!response.erro) {
               //tudo certo com a atualização do usuário
               window.location.href = "<?php echo site_url() ?>" + response.redirect;
+
 
             }
 
@@ -125,8 +126,8 @@
           },
           error: function() {
             alert("Não foi possível processar a solicitação. Por favor, entre em contato com o suporte técnico.");
-            $("#btn-lgoin").val('Salvar');
-            $("#btn-lgoin").removeAttr("disabled");
+            $("#btn-login").val('Entrar');
+            $("#btn-login").removeAttr("disabled");
           }
         });
       });

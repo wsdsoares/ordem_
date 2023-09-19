@@ -41,7 +41,7 @@ class Login extends BaseController
         $usuarioLogado = $autenticacao->pegaUsuarioLogado();
         session()->setFlashdata('sucesso', "Olá $usuarioLogado->nome, que bom que está de volta!");
 
-        if ($usuarioLogado->isCliente) {
+        if ($usuarioLogado->is_cliente) {
             $retorno['redirect'] = 'ordens/minhas';
             return $this->response->setJSON($retorno);
         }

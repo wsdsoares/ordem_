@@ -16,11 +16,13 @@ class Filters extends BaseConfig
      * make reading things nicer and simpler.
      */
     public array $aliases = [
-        'csrf'          => CSRF::class,
-        'toolbar'       => DebugToolbar::class,
-        'honeypot'      => Honeypot::class,
-        'invalidchars'  => InvalidChars::class,
-        'secureheaders' => SecureHeaders::class,
+        'csrf'              => CSRF::class,
+        'toolbar'           => DebugToolbar::class,
+        'honeypot'          => Honeypot::class,
+        'invalidchars'      => InvalidChars::class,
+        'secureheaders'     => SecureHeaders::class,
+        'login'             => \App\Filters\LoginFilter::class, // Filtro de login
+        'visitante'         => \App\Filters\VisitanteFilter::class, // Filtro de login
     ];
 
     /**
@@ -60,5 +62,20 @@ class Filters extends BaseConfig
      * Example:
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
-    public array $filters = [];
+    public array $filters = [
+        'login' => [
+            'before' => [
+                '/',
+                'home(/*)?',
+                'usuarios(/*)?',
+                'grupos(/*)?',
+            ],
+        ],
+        'visitante' => [
+            'before' => [
+                'login(/*)?',
+                'password(/*)?',
+            ],
+        ]
+    ];
 }
