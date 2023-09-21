@@ -97,4 +97,4 @@
         });
     });
 </script>
-<?php echo $this->endSection() ?>''
+<?php echo $this->endSection(); ?>

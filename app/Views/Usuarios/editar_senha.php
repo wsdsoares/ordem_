@@ -20,15 +20,18 @@
                 <?php echo form_open('/', ['id' => 'form']) ?>
                 <div class="form-group">
                     <label class="form-control-label">Informe a senha atual</label>
-                    <input type="password" name="current_password" class="form-control" placeholder="Digite aqui sua senha atual">
+                    <input type="password" name="current_password" class="form-control">
+                    <!-- <input type="password" name="current_password" class="form-control" placeholder="Digite aqui sua senha atual"> -->
                 </div>
                 <div class="form-group">
                     <label class="form-control-label">Informe a nova senha</label>
-                    <input type="password" name="password" class="form-control" placeholder="Digite aqui a nova senha">
+                    <input type="password" name="password" class="form-control">
+                    <!-- <input type="password" name="password" class="form-control" placeholder="Digite aqui a nova senha"> -->
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label">Informe a nova senha</label>
-                    <input type="password" name="password_confirmation" class="form-control" placeholder="Repita a nova senha">
+                    <label class="form-control-label">confirmação de senha (nova senha)</label>
+                    <input type="password" name="password_confirmation" class="form-control">
+                    <!-- <input type="password" name="password_confirmation" class="form-control" placeholder="Repita a nova senha"> -->
                 </div>
                 <div class="form-group mt-5 mb-2">
                     <input id="btn-salvar" type="submit" value="Salvar" class="btn btn-danger btn-sm mr-2">
@@ -42,7 +45,6 @@
 </div>
 <?php echo $this->endSection() ?>
 
-
 <?php echo $this->section('scripts') ?>
 <script>
     $(document).ready(function() {
@@ -52,13 +54,14 @@
 
             $.ajax({
                 type: 'POST',
-                url: '<?= site_url('usuarios/atualizarsenha'); ?>',
+                url: '<?php echo site_url('usuarios/atualizarsenha'); ?>',
                 data: new FormData(this),
                 dataType: 'json',
                 contentType: false,
                 cache: false,
                 processData: false,
                 beforeSend: function() {
+
                     $("#response").html('');
                     $("#btn-salvar").val('Por favor aguarde...');
 
@@ -66,8 +69,8 @@
                 success: function(response) {
                     $("#btn-salvar").val('Salvar');
                     $("#btn-salvar").removeAttr("disabled");
-                    $('[name=csrf_ordem]').val(response.token);
 
+                    $('[name=csrf_ordem]').val(response.token);
 
                     if (!response.erro) {
 
@@ -87,9 +90,7 @@
                         if (response.erros_model) {
 
                             $.each(response.erros_model, function(key, value) {
-
                                 $("#response").append('<ul class="list-unstyled"><li class="text-danger">' + value + '</li></ul>');
-
                             });
 
                         }
@@ -113,4 +114,4 @@
 
     });
 </script>
-<?php echo $this->endSection() ?>''
+<?php echo $this->endSection(); ?>

@@ -21,6 +21,7 @@ class Usuarios extends BaseController
     /*======================================================================= */
     public function index()
     {
+
         $data = [
             'titulo' => 'Listando os usuários do sistema'
         ];
@@ -173,7 +174,7 @@ class Usuarios extends BaseController
         //preenchemos os atributos do usuários com os valores do post
         $usuario->fill($post);
 
-        if ($usuario->hasChanged() == false) {
+        if ($usuario->hasChanged() === false) {
             $retorno['info'] = 'Não há dados para serem atualizados';
             return $this->response->setJSON($retorno);
         }
@@ -467,6 +468,7 @@ class Usuarios extends BaseController
         return view('Usuarios/editar_senha', $data);
     }
 
+    /*======================================================================= */
     public function atualizarsenha()
     {
         if (!$this->request->isAJAX()) {
@@ -476,12 +478,33 @@ class Usuarios extends BaseController
         //envido o hash do token do form
         $retorno['token'] = csrf_hash();
 
-        //recuperar o post da requisição
-        //$post = $this->request->getPost();
-        echo '<pre>';
-        print_r($this->request->getPost());
-        exit;
-        echo '</pre>';
+        $current_password = $this->request->getPost('current_password');
+
+        $usuario =  usuario_logado();
+
+        if ($usuario->verificaPassword($current_password) === false) {
+            $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente';
+            $retorno['erros_model'] = ['current_password' => 'Senha atual inválida'];
+            return $this->response->setJSON($retorno);
+        }
+
+        $usuario->fill($this->request->getPost());
+
+        if ($usuario->hasChanged() === false) {
+            $retorno['info'] = 'Não há dados para serem atualizados';
+            return $this->response->setJSON($retorno);
+        }
+
+        if ($this->usuarioModel->save($usuario)) {
+            $retorno['sucesso'] = 'Senha atualizada com sucesso!';
+            return $this->response->setJSON($retorno);
+        }
+
+        $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
+        $retorno['erros_model'] = $this->usuarioModel->errors();
+
+        //Retorno para o ajax request
+        return $this->response->setJSON($retorno);
     }
 
     /*======================================================================= */

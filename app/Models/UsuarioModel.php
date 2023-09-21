@@ -68,6 +68,8 @@ class UsuarioModel extends Model
 
         return $data;
     }
+
+    /*======================================================================= */
     /**
      * Método que recupera o usuário para logar na aplicação
      * @param string $email
@@ -79,6 +81,7 @@ class UsuarioModel extends Model
         return $this->where('email', $email)->where('deletado_em', null)->first();
     }
 
+    /*======================================================================= */
     /**
      * Método que recupera as permissoes do usuário para logado na aplicação
      * @param int $usuario_id
