@@ -28,12 +28,15 @@ class Login extends BaseController
         //capturando a instância do serviço autenticação
         $autenticacao = service('autenticacao');
 
+        // print_r($autenticacao->login($email, $password));
+
         if ($autenticacao->login($email, $password) === false) {
             //Credenciais inválidas
             $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
             $retorno['erros_model'] = ['credenciais' => 'Não encontramos suas credenciais de acesso'];
             return $this->response->setJSON($retorno);
         }
+        // exit('entrei aqui 2');
 
         //Credenciais validadas
 

@@ -19,8 +19,8 @@
           <img src="<?php echo site_url(); ?>recursos/img/logo/logo_pref2.jpg" alt="">
         </div>
         <div class="mt-5 text-center">
-          <h1>Prefeitura Municipal de Itamarandiba</h1>
-          <p class="pt-5">Guarda Municipal</p>
+          <h1>Esqueci a minha senha</h1>
+          <p class="">Informe seu email de acesso, para dar inicio à recuperação do acesso!</p>
         </div>
       </div>
     </div>
@@ -32,21 +32,16 @@
         <?php echo form_open('/', ['id' => 'form', 'class' => 'form-validate']); ?>
         <div id="response"></div>
         <div class="container-fluid">
-          <!-- Espaço reservado para renderizar o conteudo de cada view e extender esse layout -->
-
         </div>
 
         <div class="form-group">
           <input id="login-username" type="text" name="email" required data-msg="Por favor, informe seu email." class="input-material">
-          <label for="login-username" class="label-material">Seu e-email de acesso</label>
+          <label for="login-username" class="label-material">Informe seu e-email de acesso</label>
         </div>
-        <div class="form-group">
-          <input id="login-password" type="password" name="password" required data-msg="Por favor, informe a sua senha" class="input-material">
-          <label for="login-password" class="label-material">Senha</label>
-        </div>
-        <input id="btn-login" type="submit" class="btn btn-primary " value="Entrar" />
+
+        <input id="btn-esqueci" type="submit" class="btn btn-primary" value="Enviar" />
         <?php echo form_close(); ?>
-        <a href="<?php echo site_url('esqueci'); ?>" class="forgot-pass mt-3">Esqueceu a sua senha?</a>
+        <a href="<?php echo site_url('login'); ?>" class="forgot-pass mt-3">Voltar</a>
       </div>
     </div>
   </div>
@@ -65,7 +60,7 @@
 
       $.ajax({
         type: 'POST',
-        url: '<?php echo site_url('login/criar'); ?>',
+        url: '<?php echo site_url('password/processaesqueci'); ?>',
         data: new FormData(this),
         dataType: 'json',
         contentType: false,
@@ -73,17 +68,17 @@
         processData: false,
         beforeSend: function() {
           $("#response").html('');
-          $("#btn-login").val('Por favor, aguarde...');
+          $("#btn-esqueci").val('Por favor, aguarde...');
         },
         success: function(response) {
-          $("#btn-login").val('Entrar');
-          $("#btn-login").removeAttr("disabled");
+          $("#btn-esqueci").val('Enviar');
+          $("#btn-esqueci").removeAttr("disabled");
 
           $('[name=csrf_ordem]').val(response.token);
 
           if (!response.erro) {
             //tudo certo com a atualização do usuário
-            window.location.href = "<?php echo site_url() ?>" + response.redirect;
+            window.location.href = "<?php echo site_url("password/resetenviado") ?>";
           }
 
           if (response.erro) {
@@ -98,8 +93,8 @@
         },
         error: function() {
           alert("Não foi possível processar a solicitação. Por favor, entre em contato com o suporte técnico.");
-          $("#btn-login").val('Entrar');
-          $("#btn-login").removeAttr("disabled");
+          $("#btn-esqueci").val('Enviar');
+          $("#btn-esqueci").removeAttr("disabled");
         }
       });
     });

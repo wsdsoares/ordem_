@@ -35,17 +35,16 @@
       <div class="form-holder has-shadow">
 
         <!-- Espaço reservado para renderizar o conteudo de cada view e extender esse layout -->
+        <?php echo $this->include('Layout/_mensagens'); ?>
+
         <?php echo $this->renderSection('conteudo'); ?>
-
-
 
       </div>
     </div>
-    <div class="copyrights text-center">
+    <!-- <div class="copyrights text-center">
       <p>2018 &copy; Your company. Download From <a target="_blank" href="https://templateshub.net">Templates Hub</a>.</p>
-    </div>
+    </div> -->
   </div>
-  <!-- JavaScript files-->
   <!-- JavaScript files-->
   <script src="<?= site_url('recursos/') ?>vendor/jquery/jquery.min.js"></script>
   <script src="<?= site_url('recursos/') ?>vendor/popper.js/umd/popper.min.js"> </script>
