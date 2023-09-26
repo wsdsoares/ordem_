@@ -36,7 +36,6 @@ class Login extends BaseController
             $retorno['erros_model'] = ['credenciais' => 'Não encontramos suas credenciais de acesso'];
             return $this->response->setJSON($retorno);
         }
-        // exit('entrei aqui 2');
 
         //Credenciais validadas
 
