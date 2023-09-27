@@ -27,7 +27,6 @@ class Password extends BaseController
             'titulo' => ''
         ];
 
-
         if (!$this->request->isAJAX()) {
             return redirect()->back();
         }
