@@ -74,7 +74,7 @@ class Autenticacao
   /*======================================================================= */
   /**
    * Método que insere na seção o id do usuário
-   * @param string $usuario
+   * @param object $usuario
    * @return boolean
    */
   private function logaUsuario(object $usuario): void
@@ -86,7 +86,8 @@ class Autenticacao
     // $session->regenerate();
     $_SESSION['__ci_last_regenerate'] = time();
 
-    //setamos na sessão o id do usário
+    //setamos na sessão o id do usuário
+
     $session->set('usuario_id', $usuario->id);
   }
 

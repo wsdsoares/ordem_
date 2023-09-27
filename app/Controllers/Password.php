@@ -36,6 +36,32 @@ class Password extends BaseController
         $retorno['token'] = csrf_hash();
 
         //recuperar o email da requisição
-        $email = $this->request->getPost('email');
+        $email = (string) $this->request->getPost('email');
+        $usuario = $this->usuarioModel->buscaUsuarioPorEmail($email);
+
+        if ($usuario === null || $usuario->ativo === false) {
+            $retorno['erro'] = 'Não encontramos uma conta válida com esse e-mail.';
+            return $this->response->setJSON($retorno);
+        }
+
+        $usuario->iniciaPasswordReset();
+
+        $this->usuarioModel->save($usuario);
+
+        /**
+         * @todo enviar e-mail de recuperação
+         */
+
+        return $this->response->setJSON([]);
+    }
+
+    public function resetenviado()
+    {
+
+        $data = [
+            'titulo' => 'E-mail de recuperação enviado para a sua caixa de entrada.'
+        ];
+
+        return view('Password/reset_enviado', $data);
     }
 }

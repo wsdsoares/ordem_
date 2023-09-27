@@ -39,7 +39,7 @@
           <label for="login-username" class="label-material">Informe seu e-email de acesso</label>
         </div>
 
-        <input id="btn-esqueci" type="submit" class="btn btn-primary" value="Enviar" />
+        <input id="btn-esqueci" type="submit" class="btn btn-primary" value="Começar" />
         <?php echo form_close(); ?>
         <a href="<?php echo site_url('login'); ?>" class="forgot-pass mt-3">Voltar</a>
       </div>
@@ -71,14 +71,14 @@
           $("#btn-esqueci").val('Por favor, aguarde...');
         },
         success: function(response) {
-          $("#btn-esqueci").val('Enviar');
+          $("#btn-esqueci").val('Começar');
           $("#btn-esqueci").removeAttr("disabled");
 
           $('[name=csrf_ordem]').val(response.token);
 
           if (!response.erro) {
             //tudo certo com a atualização do usuário
-            window.location.href = "<?php echo site_url("password/resetenviado") ?>";
+            window.location.href = "<?php echo site_url("password/resetenviado"); ?>";
           }
 
           if (response.erro) {
@@ -93,7 +93,7 @@
         },
         error: function() {
           alert("Não foi possível processar a solicitação. Por favor, entre em contato com o suporte técnico.");
-          $("#btn-esqueci").val('Enviar');
+          $("#btn-esqueci").val('Começar');
           $("#btn-esqueci").removeAttr("disabled");
         }
       });
