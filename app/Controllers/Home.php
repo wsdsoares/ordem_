@@ -27,25 +27,5 @@ class Home extends BaseController
         // $autenticacao->logout();
         // return redirect()->to(site_url('/'));
     }
-
-    public function email()
-    {
-        $email = service('email');
-
-        $email->setFrom('no-replay@ordem.com', 'Ordem de Servico INC');
-        $email->setTo('wilhaod@diginey.com');
-        // $email->setCC('another@another-example.com');
-        // $email->setBCC('them@their-example.com');
-
-        $email->setSubject('Recuperação de senha');
-        $email->setMessage('Iniciando a recuperação de senha - Atualizado');
-
-
-        if ($email->send()) {
-            echo 'Email enviado';
-        } else {
-            $email->printDebugger();
-            $email->send();
-        }
-    }
 }
+//erro no servidor authenticate plane hostinger

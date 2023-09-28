@@ -47,10 +47,7 @@ class Password extends BaseController
 
         $this->usuarioModel->save($usuario);
 
-        /**
-         * @todo enviar e-mail de recuperação
-         */
-
+        $this->enviaEmailRedefinicaoSenha($usuario);
         return $this->response->setJSON([]);
     }
 
@@ -62,5 +59,21 @@ class Password extends BaseController
         ];
 
         return view('Password/reset_enviado', $data);
+    }
+    /**
+     * Método que envia o email para usuário
+     * @param object $usuario
+     * @return void
+     */
+
+    private function enviaEmailRedefinicaoSenha(object $usuario): void
+    {
+        $email = service('email');
+
+        $email->setFrom('contato@kodeversion.com', 'Ordem de Servico INC');
+        $email->setTo($usuario->email);
+        $email->setSubject('Redefinição da senha de acesso');
+        $email->setMessage('Iniciando a recuperação de senha temporário');
+        $email->send();
     }
 }
