@@ -12,6 +12,8 @@ class Password extends BaseController
     {
         $this->usuarioModel = new \App\Models\UsuarioModel();
     }
+
+    /*======================================================================= */
     public function esqueci()
     {
         $data = [
@@ -21,6 +23,7 @@ class Password extends BaseController
         return view('Password/esqueci', $data);
     }
 
+    /*======================================================================= */
     public function processaEsqueci()
     {
         $data = [
@@ -50,6 +53,7 @@ class Password extends BaseController
         $this->enviaEmailRedefinicaoSenha($usuario);
         return $this->response->setJSON([]);
     }
+    /*======================================================================= */
 
     public function resetenviado()
     {
@@ -60,6 +64,55 @@ class Password extends BaseController
 
         return view('Password/reset_enviado', $data);
     }
+    /*======================================================================= */
+    public function reset($token = null)
+    {
+        if ($token === null) {
+            return redirect()->to(site_url("password/esqueci"))->with("atencao", "Link inválido ou expirado");
+        }
+
+        //busca o usuário na base de dados de acordo com hash do token que veio no parâmetro
+        $usuario = $this->usuarioModel->buscaUsuarioParaRedefinirSenha($token);
+
+        if ($usuario === null) {
+            return redirect()->to(site_url("password/esqueci"))->with("atencao", "Link inválido ou expirado");
+        }
+
+        $data = [
+            'titulo' => "Crie sua nova senha de acesso.",
+            'token' => $token,
+        ];
+
+        return view('Password/reset', $data);
+    }
+
+    /*======================================================================= */
+    public function processaReset($token = null)
+    {
+
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        //envido o hash do token do form
+        $retorno['token'] = csrf_hash();
+
+        //recuperar todos os dados do post
+        $post = $this->request->getPost();
+
+        //busca o usuário na base de dados de acordo com hash do token que veio no parâmetro
+        $usuario = $this->usuarioModel->buscaUsuarioParaRedefinirSenha($post['token']);
+
+        if ($usuario === null) {
+            $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente';
+            $retorno['erros_model'] = ['link_invalido' => 'Link inválido ou expirado.'];
+            return $this->response->setJSON($retorno);
+        }
+
+        $usuario->fill($post);
+    }
+
+    /*======================================================================= */
     /**
      * Método que envia o email para usuário
      * @param object $usuario
@@ -68,12 +121,17 @@ class Password extends BaseController
 
     private function enviaEmailRedefinicaoSenha(object $usuario): void
     {
+
         $email = service('email');
 
         $email->setFrom('contato@kodeversion.com', 'Ordem de Servico INC');
         $email->setTo($usuario->email);
         $email->setSubject('Redefinição da senha de acesso');
-        $email->setMessage('Iniciando a recuperação de senha temporário');
+        $data = [
+            'token' => $usuario->reset_token,
+        ];
+        $mensagem = view('Password/reset_email', $data);
+        $email->setMessage($mensagem);
         $email->send();
     }
 }
