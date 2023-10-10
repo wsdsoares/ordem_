@@ -16,9 +16,9 @@ class Login extends BaseController
 
     public function criar()
     {
-        // if (!$this->request->isAJAX()) {
-        //     return redirect()->back();
-        // }
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
 
         //envido o hash do token do form
         $retorno['token'] = csrf_hash();
@@ -28,9 +28,6 @@ class Login extends BaseController
 
         //capturando a instância do serviço autenticação
         $autenticacao = service('autenticacao');
-
-        print_r($autenticacao->login($email, $password));
-        exit('aw');
 
         if ($autenticacao->login($email, $password) === false) {
             //Credenciais inválidas
