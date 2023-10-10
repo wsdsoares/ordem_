@@ -165,7 +165,7 @@ class Usuarios extends BaseController
         $usuario = $this->buscaUsuarioOu404($post['id']);
 
         //se não foi informado a senha removemos o $POST
-        //se não fizermos dessa forma, o hashPassord fará o hash de uma string vazia - Before callbacks model
+        //se não fizermos dessa forma, o hashPassword fará o hash de uma string vazia - Before callbacks model
         if (empty($post['password'])) {
             unset($post['password']);
             unset($post['password_confirmation']);

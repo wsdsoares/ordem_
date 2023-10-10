@@ -17,7 +17,6 @@
         <div class="logo text-center">
 
           <img src="<?php echo site_url(); ?>recursos/img/logo/logo_pref2.jpg" alt="">
-
         </div>
         <div class="mt-5 text-center">
           <h1><?php echo $titulo; ?></h1>
@@ -39,11 +38,11 @@
 
         <div class="form-group">
           <input id="login-password" type="password" name="password" required data-msg="Por favor, informe a sua nova senha" class="input-material">
-          <label for="login-password" class="label-material">Nova senha</label>
+          <label for="login-password" class="label-material">Sua nova senha</label>
         </div>
         <div class="form-group">
-          <input id="login-password" type="password" name="password_confirmation" required data-msg="Por favor, confirme a sua nova senha" class="input-material">
-          <label for="login-password" class="label-material">Confirme a sua nova Senha</label>
+          <input id="login-password" type="password" name="password_confirmation" required data-msg="Por favor, confirme sua nova senha" class="input-material">
+          <label for="login-password" class="label-material">Confirme a sua nova senha</label>
         </div>
         <input id="btn-reset" type="submit" class="btn btn-primary " value="Criar nova senha" />
         <?php echo form_close(); ?>
@@ -53,6 +52,7 @@
 </div>
 
 <?php echo $this->endSection() ?>
+
 
 <?php echo $this->section('scripts') ?>
 <!-- Aqui coloco os scripts da view -->
@@ -64,7 +64,7 @@
 
       $.ajax({
         type: 'POST',
-        url: '<?php echo site_url('password/processareset'); ?>',
+        url: '<?php echo site_url('password/processaReset'); ?>',
         data: new FormData(this),
         dataType: 'json',
         contentType: false,
@@ -81,8 +81,7 @@
           $('[name=csrf_ordem]').val(response.token);
 
           if (!response.erro) {
-            //tudo certo com a criação da nova senha do usuário
-            window.location.href = "<?php echo site_url('login') ?>";
+            window.location.href = "<?php echo site_url("login") ?>";
           }
 
           if (response.erro) {

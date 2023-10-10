@@ -80,7 +80,7 @@ class Password extends BaseController
 
         $data = [
             'titulo' => "Crie sua nova senha de acesso.",
-            'token' => $token,
+            'token' => $token
         ];
 
         return view('Password/reset', $data);
@@ -110,6 +110,21 @@ class Password extends BaseController
         }
 
         $usuario->fill($post);
+
+        $usuario->finalizaPasswordReset();
+
+        if ($this->usuarioModel->save($usuario)) {
+
+            session()->setFlashdata('sucesso', 'Nova senha criada com sucesso!');
+
+            return $this->response->setJSON($retorno);
+        }
+
+        $retorno['erro'] = 'Por favor, verifique os erros abaixo e tente novamente!';
+        $retorno['erros_model'] = $this->usuarioModel->errors();
+
+        //Retorno para o ajax request
+        return $this->response->setJSON($retorno);
     }
 
     /*======================================================================= */

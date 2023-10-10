@@ -1,59 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br" class="h-100">
 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Ordem de Serviço | <?php echo $this->renderSection('titulo') ?></title>
-  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="">
+  <meta name="robots" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <!-- Bootstrap CSS-->
-  <link rel="stylesheet" href="<?= site_url('recursos/') ?>vendor/bootstrap/css/bootstrap.min.css">
-  <!-- Font Awesome CSS-->
-  <link rel="stylesheet" href="<?= site_url('recursos/') ?>vendor/font-awesome/css/font-awesome.min.css">
-  <!-- Custom Font Icons CSS-->
-  <link rel="stylesheet" href="<?= site_url('recursos/') ?>css/font.css">
-  <!-- Google fonts - Muli-->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
-  <!-- theme stylesheet-->
-  <link rel="stylesheet" href="<?= site_url('recursos/') ?>css/style.blue.css" id="theme-stylesheet">
-  <!-- Custom stylesheet - for your changes-->
-  <link rel="stylesheet" href="<?= site_url('recursos/') ?>css/custom.css">
-  <!-- Favicon-->
-  <link rel="shortcut icon" href="img/favicon.ico">
-  <!-- Tweaks for older IEs--><!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+  <!-- @todo Validar depois -->
+  <meta name="description" content="">
+  <meta property="og:title" content="">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="">
+  <meta name="format-detection" content="telephone=no">
 
-  <?php echo $this->renderSection('estilos'); ?>
+  <!-- PAGE TITLE HERE -->
+  <title>Ordem de Serviço | <?php echo $this->renderSection('titulo') ?></title>
+
+  <!-- FAVICONS ICON -->
+  <link rel="shortcut icon" type="image/png" href="<?= site_url('recursos') ?>/images/favicon.png">
+  <link href="<?= site_url('recursos') ?>/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+  <link href="<?= site_url('recursos') ?>/css/style.css" rel="stylesheet">
+
 </head>
 
-<body>
-  <div class="login-page">
-    <div class="container d-flex align-items-center">
-      <div class="form-holder has-shadow">
+<body class="vh-100">
+  <div class="authincation h-100">
+    <div class="container-fluid h-100">
 
-        <!-- Espaço reservado para renderizar o conteudo de cada view e extender esse layout -->
-        <?php echo $this->include('Layout/_mensagens'); ?>
+      <!-- Espaço reservado para renderizar o conteudo de cada view e extender esse layout -->
+      <?php echo $this->include('Layout/_mensagens'); ?>
 
-        <?php echo $this->renderSection('conteudo'); ?>
+      <?php echo $this->renderSection('conteudo'); ?>
 
-      </div>
     </div>
-    <!-- <div class="copyrights text-center">
-      <p>2018 &copy; Your company. Download From <a target="_blank" href="https://templateshub.net">Templates Hub</a>.</p>
-    </div> -->
   </div>
-  <!-- JavaScript files-->
-  <script src="<?= site_url('recursos/') ?>vendor/jquery/jquery.min.js"></script>
-  <script src="<?= site_url('recursos/') ?>vendor/popper.js/umd/popper.min.js"> </script>
-  <script src="<?= site_url('recursos/') ?>vendor/bootstrap/js/bootstrap.min.js"></script>
-  <script src="<?= site_url('recursos/') ?>vendor/jquery-validation/jquery.validate.min.js"></script>
-  <script src="<?= site_url('recursos/') ?>js/front.js"></script>
+
+  <!--**********************************
+	Scripts
+***********************************-->
+  <!-- Required vendors -->
+  <script src="<?= site_url('recursos') ?>/vendor/global/global.min.js"></script>
+  <script src="<?= site_url('recursos') ?>/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  <script src="<?= site_url('recursos') ?>/js/deznav-init.js"></script>
+
+  <script src="<?= site_url('recursos') ?>/js/custom.js"></script>
+  <!-- <script src="<?= site_url('recursos') ?>/js/styleSwitcher.js"></script> -->
 
   <!-- Espaço reservado para renderizar os scripts de cada view e extender esse layout -->
   <?php echo $this->renderSection('scripts'); ?>
+
 </body>
 
 </html>

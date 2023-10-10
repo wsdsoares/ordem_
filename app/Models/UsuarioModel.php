@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
-use \App\Libraries\Token;
+use App\Libraries\Token;
 
 class UsuarioModel extends Model
 {
@@ -14,7 +14,7 @@ class UsuarioModel extends Model
     protected $allowedFields    = [
         'nome',
         'email',
-        'passord',
+        'password',
         'reset_hash',
         'reset_expira_em',
         'imagem',
@@ -122,7 +122,6 @@ class UsuarioModel extends Model
         $usuario = $this->where('reset_hash', $tokenHash)
             ->where('deletado_em', null)
             ->first();
-
 
         if ($usuario === null) {
             return null;
